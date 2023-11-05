@@ -1,94 +1,67 @@
+"use client";
 import Image from 'next/image'
 import styles from './page.module.css'
+import { useState } from 'react';
+import axios from 'axios';
 
 export default function Home() {
+  const [author,setAuthor] = useState(null);
+  const [quote,setQuote] = useState("");
+
+  const handleChange = (e) => {
+    let temp = e.target.value;
+    setAuthor((temp.toLowerCase()).replaceAll(" ","-"));
+  }
+
+  const handleGenerate = (e) =>{
+     e.preventDefault();
+     if(author === null){
+     axios.get('/quotes/random')
+     .then((response)=>{ setQuote(response.data[0].content) })
+     }
+     else{
+
+      axios.get(`/author/${author}`)
+      .then((response)=> { setQuote(response.data.quote) })
+     }
+
+
+  }
   return (
     <main className={styles.main}>
+    <h2>Quote Generator</h2>
       <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+          <form>
+          <select onChange={handleChange} name='author' className={styles.select}>
+            <option></option>
+            <option value="A. P. J. Abdul Kalam">Abdul Kalam</option>
+            <option value="Abraham Lincoln">Abraham Lincoln</option>
+            <option value="Albert Einstein">Albert Einstein</option>
+            <option value="Aristotle">Aristotle</option>
+            <option value="Benjamin Franklin">Benjamin Franklin</option>
+            <option value="Bruce Lee">Bruce Lee</option>
+            <option value="Confucius">Confucius</option>
+            <option value="Dalai Lama">Dalai Lama</option>
+            <option value="Epictetus">Epictetus</option>
+            <option value="Jawaharlal Nehru">Jawaharlal Nehru</option>
+            <option value="Laozi">Laozi</option>
+            <option value="Mahatma Gandhi">Mahatma Gandhi</option>
+            <option value="Napoleon">Napoleon</option>
+            <option value="Socrates">Socrates</option>
+            <option value="Swami Vivekananda">Swami Vivekananda</option>
+            <option value="The Buddha">The Buddha</option>
+            <option value="Thomas Edison">Thomas Edison</option>
+            <option value="William Wordsworth">William Wordsworth</option>
+            <option value="William Shakespeare">William Shakespeare</option>
+            <option value="Winston Churchill">Winston Churchill</option>
+          </select>
+          <button onClick={handleGenerate} className={styles.btn}>Generate</button>
+          </form>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        <div>
+          <p>{quote}</p>
+        </div>
       </div>
     </main>
   )
